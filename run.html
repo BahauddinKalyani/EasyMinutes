@@ -1,0 +1,89 @@
+<html>
+
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.7/dist/bundle.min.js"></script>
+<script type="module">
+  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+  const socket = io('http://localhost:8000', {
+    reconnection: true,
+    reconnectionAttempts: 5, // Number of attempts before giving up
+    reconnectionDelay: 1000, // Initial delay in milliseconds
+    reconnectionDelayMax: 5000,
+    connectionStateRecovery: {
+    // the backup duration of the sessions and the packets
+    maxDisconnectionDuration: 2 * 60 * 1000,
+    // whether to skip middlewares upon successful recovery
+    skipMiddlewares: true,
+  }
+  });
+
+  async function main() {
+    
+    const myvad = await vad.MicVAD.new({
+      // frameSamples: 16000,
+      // minSpeechFrames: ,
+      onSpeechStart: () => {
+        console.log("Speech start detected")
+      },
+      onSpeechEnd: (audio) => {
+        // do something with `audio` (Float32Array of audio samples at sample rate 16000)...
+        console.log("Speech end detected")
+        console.log(audio)
+        let audio1 = JSON.stringify(audio);
+        socket.emit('audio', audio1);
+        // socket.emit('audio', "Hello");
+      }
+    })
+    myvad.start()
+  }
+  
+  
+  socket.on('transcript', (transcript) => {
+    console.log(transcript);
+    console.log("Transcript received");
+    // document.getElementById("transcripts").innerHTML = transcript;
+    const targetDiv = document.getElementById('transcripts'); // Replace 'myDiv' with the actual ID of your div
+
+    // 2. Create a new HTML element (e.g., a paragraph)
+    const newElement = document.createElement('p');
+    newElement.textContent = transcript; // Set the content
+
+    // 3. (Optional) Add attributes to the new element
+    // newElement.setAttribute('class', 'my-custom-class'); // Add a class attribute
+
+    // 4. Append the new element to the target div
+    targetDiv.appendChild(newElement);
+  });
+
+  socket.on('reconnecting', (attemptNumber) => {
+    console.log(`Attempting to reconnect (attempt ${attemptNumber})`);
+  });
+
+  socket.on('reconnect', (attemptNumber) => {
+      console.log(`Reconnected after ${attemptNumber} attempts`);
+  });
+
+  socket.on('reconnect_failed', () => {
+      console.log(`Reconnection failed`);
+  });
+
+  main()
+  setInterval(() => {
+    console.log("Ping")
+    socket.emit('ping', "ping");
+  }, 5000);
+
+  socket.on('pong', (message) => {
+    console.log(message);
+  });
+  
+</script>
+<body>
+  <h1>Speech to Text</h1>
+  <p>Click the button to start recording</p>
+  <button onclick="main()">Start Recording</button>
+  <p>Click the button to stop recording</p>
+  <button onclick="myvad.stop()">Stop Recording</button>
+  <div id="transcripts"></div>
+</body>
+</html>

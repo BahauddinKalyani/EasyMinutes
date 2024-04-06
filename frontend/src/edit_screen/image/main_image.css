@@ -1,0 +1,14 @@
+.image-container {
+    width: 100%; /* The container will adjust to the width of its parent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Ensure the image stays within the container */
+    /* You can add a max-height if you want to limit the height of the container */
+  }
+  
+  .centered-image {
+    /* The image will shrink or grow as necessary to fit inside the container */
+    max-width: 100%;
+    max-height: 100%;
+  }

@@ -1,0 +1,9 @@
+numpy
+flask
+flask_socketio
+gevent-websocket
+flask-cors
+faster_whisper
+termcolor
+transformers
+nvidia-cuda-runtime-cu12

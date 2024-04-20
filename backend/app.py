@@ -8,7 +8,7 @@ from model_service import transcribe_chunk, generate_minutes
 from audio_service import convert_to_wav
 import wave
 import os
-
+from email_service import send_email
 import json
 
 app = Flask(__name__)
@@ -54,11 +54,14 @@ def handle_audio(audio_data):
     with open('transcripts.txt', "a") as file:
         file.write(transcripts)
 
-# @socketio.on('mom')
-# def generate_mom(message):
-#     print('generating mom...')
-#     minutes = generate_minutes('transcript.txt')
-#     emit('minutes', minutes)
+@socketio.on('mom')
+def generate_mom(email):
+    print('generating mom...')
+    print('sending email to...', email)
+    # print(os.getenv("OPENAI_API_KEY"))
+    minutes = generate_minutes('transcripts.txt')
+    emit('minutes', minutes)
+    send_email(email)
 
 @socketio.on("connect")
 def handle_connect():

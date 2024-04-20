@@ -13,6 +13,7 @@ function LoginModal(props) {
             // props.updateLoginModal(false)
             // localStorage.setItem('jwtToken', response.jwt);
             // navigate('/edit', { state: response });
+            localStorage.setItem('email', data.email);
             navigate('/transcribe', { });
             message.success('Login Successful!');
         } catch (error) {

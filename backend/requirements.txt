@@ -7,3 +7,5 @@ faster_whisper
 termcolor
 transformers
 nvidia-cuda-runtime-cu12
+python-docx
+email

@@ -29,7 +29,6 @@ const layoutStyel = {
 
 function TranscriptsMain() {
   
-  
   // return (<div>{vad.userSpeaking && "User is speaking"}</div>)
   
   return (
